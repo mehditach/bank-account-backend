@@ -1,5 +1,5 @@
 package ma.enset.bank_account_backend.services;
-
+import ma.enset.bank_account_backend.dtos.AccountOperationDTO;
 import lombok.AllArgsConstructor;
 import ma.enset.bank_account_backend.dtos.BankAccountDTO;
 import ma.enset.bank_account_backend.dtos.CustomerDTO;
@@ -149,5 +149,18 @@ public class BankAccountServiceImpl implements BankAccountService {
     public void transfer(String accountIdSource, String accountIdDestination, double amount) {
         debit(accountIdSource, amount, "Virement vers " + accountIdDestination);
         credit(accountIdDestination, amount, "Virement depuis " + accountIdSource);
+    }
+
+    @Override
+    public List<AccountOperationDTO> accountHistory(String accountId) {
+        List<AccountOperation> operations = accountOperationRepository.findByBankAccountId(accountId);
+        return operations.stream().map(op -> AccountOperationDTO.builder()
+                .id(op.getId())
+                .operationDate(op.getOperationDate())
+                .amount(op.getAmount())
+                .type(op.getType())
+                .description(op.getDescription())
+                .build()
+        ).collect(Collectors.toList());
     }
 }

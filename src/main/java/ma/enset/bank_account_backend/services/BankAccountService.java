@@ -1,5 +1,5 @@
 package ma.enset.bank_account_backend.services;
-
+import ma.enset.bank_account_backend.dtos.AccountOperationDTO;
 import ma.enset.bank_account_backend.dtos.BankAccountDTO;
 import ma.enset.bank_account_backend.dtos.CustomerDTO;
 
@@ -26,4 +26,6 @@ public interface BankAccountService {
     void credit(String accountId, double amount, String description);
 
     void transfer(String accountIdSource, String accountIdDestination, double amount);
+
+    List<AccountOperationDTO> accountHistory(String accountId);
 }

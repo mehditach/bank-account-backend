@@ -1,5 +1,6 @@
 package ma.enset.bank_account_backend.web;
 
+import ma.enset.bank_account_backend.dtos.AccountOperationDTO;
 import lombok.AllArgsConstructor;
 import ma.enset.bank_account_backend.dtos.BankAccountDTO;
 import ma.enset.bank_account_backend.dtos.CustomerDTO;
@@ -85,4 +86,11 @@ public class BankAccountRestAPI {
             @RequestParam double amount) {
         bankAccountService.transfer(accountIdSource, accountIdDestination, amount);
     }
+
+    @GetMapping("/accounts/{accountId}/operations")
+    public List<AccountOperationDTO> accountHistory(@PathVariable String accountId) {
+        return bankAccountService.accountHistory(accountId);
+    }
+
+
 }
