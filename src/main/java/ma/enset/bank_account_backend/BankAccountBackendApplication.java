@@ -2,10 +2,7 @@ package ma.enset.bank_account_backend;
 
 import ma.enset.bank_account_backend.dtos.BankAccountDTO;
 import ma.enset.bank_account_backend.dtos.CustomerDTO;
-import ma.enset.bank_account_backend.entities.OperationType;
-import ma.enset.bank_account_backend.repositories.AccountOperationRepository;
-import ma.enset.bank_account_backend.repositories.BankAccountRepository;
-import ma.enset.bank_account_backend.repositories.CustomerRepository;
+import ma.enset.bank_account_backend.security.services.AccountService;
 import ma.enset.bank_account_backend.services.BankAccountService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,7 +21,7 @@ public class BankAccountBackendApplication {
 	}
 
 	@Bean
-	CommandLineRunner commandLineRunner(BankAccountService bankAccountService) {
+	CommandLineRunner commandLineRunner(BankAccountService bankAccountService, AccountService accountService) {
 		return args -> {
 
 			// creer des clients via le service
@@ -66,6 +63,18 @@ public class BankAccountBackendApplication {
 				System.out.println(account.getType());
 				System.out.println(account.getCustomer().getName());
 			});
+
+			// creer des utilisateurs et roles pour la securite
+			accountService.addNewRole("USER");
+			accountService.addNewRole("ADMIN");
+
+			accountService.addNewUser("admin", "1234", "admin@bank.com");
+			accountService.addNewUser("user1", "1234", "user1@bank.com");
+
+			accountService.addRoleToUser("admin", "USER");
+			accountService.addRoleToUser("admin", "ADMIN");
+			accountService.addRoleToUser("user1", "USER");
 		};
+
 	}
 }
