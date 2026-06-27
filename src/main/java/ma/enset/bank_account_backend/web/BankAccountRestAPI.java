@@ -97,5 +97,21 @@ public class BankAccountRestAPI {
         return bankAccountService.getDashboardStats();
     }
 
+    @PutMapping("/customers/{id}")
+    public CustomerDTO updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
+        customerDTO.setId(id);
+        return bankAccountService.saveCustomer(customerDTO);
+    }
+
+    @DeleteMapping("/customers/{id}")
+    public void deleteCustomer(@PathVariable Long id) {
+        bankAccountService.deleteCustomer(id);
+    }
+
+    @GetMapping("/customers/search")
+    public List<CustomerDTO> searchCustomers(@RequestParam(defaultValue = "") String keyword) {
+        return bankAccountService.searchCustomers(keyword);
+    }
+
 
 }

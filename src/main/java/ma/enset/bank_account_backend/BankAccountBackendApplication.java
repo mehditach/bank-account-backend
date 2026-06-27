@@ -20,7 +20,7 @@ public class BankAccountBackendApplication {
 		SpringApplication.run(BankAccountBackendApplication.class, args);
 	}
 
-	@Bean
+	/*@Bean
 	CommandLineRunner commandLineRunner(BankAccountService bankAccountService, AccountService accountService) {
 		return args -> {
 
@@ -75,6 +75,12 @@ public class BankAccountBackendApplication {
 			accountService.addRoleToUser("admin", "ADMIN");
 			accountService.addRoleToUser("user1", "USER");
 		};
-
+	}*/
+	@Bean
+	CommandLineRunner commandLineRunner(BankAccountService bankAccountService, AccountService accountService) {
+		return args -> {
+			// Donnees deja inserees - CommandLineRunner desactive pour eviter les doublons
+			System.out.println("Application demarree - donnees existantes conservees");
+		};
 	}
 }

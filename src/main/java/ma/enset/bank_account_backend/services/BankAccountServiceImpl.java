@@ -217,4 +217,16 @@ public class BankAccountServiceImpl implements BankAccountService {
 
         return stats;
     }
+
+    @Override
+    public void deleteCustomer(Long customerId) {
+        customerRepository.deleteById(customerId);
+    }
+
+    @Override
+    public List<CustomerDTO> searchCustomers(String keyword) {
+        return customerRepository.findByNameContains(keyword).stream()
+                .map(customer -> bankAccountMapper.fromCustomer(customer))
+                .collect(Collectors.toList());
+    }
 }

@@ -30,4 +30,8 @@ public interface BankAccountService {
     List<AccountOperationDTO> accountHistory(String accountId);
 
     java.util.Map<String, Object> getDashboardStats();
+
+    void deleteCustomer(Long customerId);
+
+    List<CustomerDTO> searchCustomers(String keyword);
 }
