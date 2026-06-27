@@ -12,4 +12,6 @@ public interface AccountService {
     void addRoleToUser(String username, String roleName);
 
     AppUser loadUserByUsername(String username);
+
+    void changePassword(String username, String oldPassword, String newPassword);
 }

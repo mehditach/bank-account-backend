@@ -114,12 +114,20 @@ public class BankAccountServiceImpl implements BankAccountService {
             throw new RuntimeException("Solde insuffisant");
         }
 
+        String currentUsername = "system";
+        org.springframework.security.core.Authentication authentication =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            currentUsername = authentication.getName();
+        }
+
         AccountOperation accountOperation = AccountOperation.builder()
                 .type(OperationType.DEBIT)
                 .amount(amount)
                 .description(description)
                 .operationDate(new Date())
                 .bankAccount(bankAccount)
+                .performedBy(currentUsername)
                 .build();
         accountOperationRepository.save(accountOperation);
 
@@ -132,12 +140,20 @@ public class BankAccountServiceImpl implements BankAccountService {
         BankAccount bankAccount = bankAccountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Compte introuvable"));
 
+        String currentUsername = "system";
+        org.springframework.security.core.Authentication authentication =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            currentUsername = authentication.getName();
+        }
+
         AccountOperation accountOperation = AccountOperation.builder()
                 .type(OperationType.CREDIT)
                 .amount(amount)
                 .description(description)
                 .operationDate(new Date())
                 .bankAccount(bankAccount)
+                .performedBy(currentUsername)
                 .build();
         accountOperationRepository.save(accountOperation);
 
@@ -160,7 +176,45 @@ public class BankAccountServiceImpl implements BankAccountService {
                 .amount(op.getAmount())
                 .type(op.getType())
                 .description(op.getDescription())
+                .performedBy(op.getPerformedBy())
                 .build()
         ).collect(Collectors.toList());
+    }
+
+    @Override
+    public java.util.Map<String, Object> getDashboardStats() {
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+
+        List<BankAccount> allAccounts = bankAccountRepository.findAll();
+
+        long savingCount = allAccounts.stream().filter(a -> a instanceof SavingAccount).count();
+        long currentCount = allAccounts.stream().filter(a -> a instanceof CurrentAccount).count();
+
+        double totalBalance = allAccounts.stream().mapToDouble(BankAccount::getBalance).sum();
+
+        List<AccountOperation> allOperations = accountOperationRepository.findAll();
+        long debitCount = allOperations.stream().filter(op -> op.getType() == OperationType.DEBIT).count();
+        long creditCount = allOperations.stream().filter(op -> op.getType() == OperationType.CREDIT).count();
+
+        double totalDebit = allOperations.stream()
+                .filter(op -> op.getType() == OperationType.DEBIT)
+                .mapToDouble(AccountOperation::getAmount).sum();
+
+        double totalCredit = allOperations.stream()
+                .filter(op -> op.getType() == OperationType.CREDIT)
+                .mapToDouble(AccountOperation::getAmount).sum();
+
+        stats.put("totalCustomers", customerRepository.count());
+        stats.put("totalAccounts", allAccounts.size());
+        stats.put("savingAccountsCount", savingCount);
+        stats.put("currentAccountsCount", currentCount);
+        stats.put("totalBalance", totalBalance);
+        stats.put("totalOperations", allOperations.size());
+        stats.put("debitCount", debitCount);
+        stats.put("creditCount", creditCount);
+        stats.put("totalDebit", totalDebit);
+        stats.put("totalCredit", totalCredit);
+
+        return stats;
     }
 }

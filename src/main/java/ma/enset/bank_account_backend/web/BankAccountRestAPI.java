@@ -92,5 +92,10 @@ public class BankAccountRestAPI {
         return bankAccountService.accountHistory(accountId);
     }
 
+    @GetMapping("/dashboard/stats")
+    public java.util.Map<String, Object> dashboardStats() {
+        return bankAccountService.getDashboardStats();
+    }
+
 
 }

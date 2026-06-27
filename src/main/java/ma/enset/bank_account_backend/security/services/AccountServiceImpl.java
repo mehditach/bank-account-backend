@@ -49,4 +49,19 @@ public class AccountServiceImpl implements AccountService {
     public AppUser loadUserByUsername(String username) {
         return appUserRepository.findByUsername(username);
     }
+
+    @Override
+    public void changePassword(String username, String oldPassword, String newPassword) {
+        AppUser appUser = appUserRepository.findByUsername(username);
+        if (appUser == null) {
+            throw new RuntimeException("Utilisateur introuvable");
+        }
+
+        if (!passwordEncoder.matches(oldPassword, appUser.getPassword())) {
+            throw new RuntimeException("Ancien mot de passe incorrect");
+        }
+
+        appUser.setPassword(passwordEncoder.encode(newPassword));
+        appUserRepository.save(appUser);
+    }
 }

@@ -28,4 +28,6 @@ public interface BankAccountService {
     void transfer(String accountIdSource, String accountIdDestination, double amount);
 
     List<AccountOperationDTO> accountHistory(String accountId);
+
+    java.util.Map<String, Object> getDashboardStats();
 }
